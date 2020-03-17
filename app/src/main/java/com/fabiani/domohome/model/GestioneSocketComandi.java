@@ -1,0 +1,255 @@
+/***************************************************************************
+ * 			              GestioneSocketComandi.java                       *
+ * 			              --------------------------                       *
+ *   date          : Jul 19, 2004                                          *
+ *   copyright     : (C) 2005 by Bticino S.p.A. Erba (CO) - Italy 	       *
+ *   				 Embedded Software Development Laboratory              *
+ *   license       : GPL                                                   *
+ *   email         : 		             				                   *
+ *   web site      : www.bticino.it; www.myhome-bticino.it                 *
+ ***************************************************************************/
+
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************/
+
+package com.fabiani.domohome.model;
+
+import com.bticino.openwebnet.OpenWebNetUtils;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
+
+/**
+ * Description:
+ * Gestione della socket Comandi, apertura connessione, chiusura connessione, invio comando
+ *
+ */
+public class GestioneSocketComandi{
+
+	/*
+	 * stato 0 = non connesso.
+	 * stato 1 = inviata richiesta socket comandi, in attesa di risposta.
+	 * stato 2 = inviato risultato sulle operazioni della password, attesa per ack o nack. Se la
+	 *           risposta Ã¨ ack si passa allo stato 3.
+	 * stato 3 = connesso correttamente.
+	 */
+
+	static ReadThread readTh; //thread per la ricezione dei caratteri inviati dal webserver
+	static NewThread timeoutThread; //thread per la gestione dei timeout
+	static int  stato;  //stato socket comandi //TODO: make it not static for thread safety
+	static Socket socket;
+	static String responseLine; //stringa in ricezione dal Webserver
+	private static final String socketComandi = "*99*0##";
+	private BufferedReader input;
+	private PrintWriter output;
+	private OpenWebNet openWebNet;
+
+
+	/**
+	 * Tentativo di apertura socket comandi verso il webserver
+	 * Diversi possibili stati:
+	 * stato 0 = non connesso
+	 * stato 1 = inviata richiesta socket comandi, in attesa di risposta
+	 * stato 2 = inviato risultato sulle operazioni della password, attesa per ack o nack. Se la
+	 *           risposta Ã¨ ack si passa allo stato 3
+	 * stato 3 = connesso correttamente
+	 *
+	 * @param ip Ip del webserver al quale connettersi
+	 * @param port Porta sulla quale aprire la connessione
+	 * @param passwordOpen Password open del webserver
+	 * @return true Se la connessione va a buon fine, false altrimenti
+	 */
+	public boolean connect(String ip, int port, int passwordOpen){
+		try{
+			System.out.println("Tentativo connessione a "+ ip +"  Port: "+ port);
+			socket = new Socket(ip, port);
+			setTimeout(0);
+			input= new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			System.out.println("Buffer reader creato");
+			output = new PrintWriter(socket.getOutputStream(),true);
+			System.out.println("Print Writer creato");
+		}catch (IOException e){
+			System.out.println("Impossibile connettersi!");
+			this.close();
+			//e.printStackTrace();
+		}
+
+		if(socket != null){
+			label:
+			while (true) {
+				readTh = null;
+				readTh = new ReadThread(socket, input, 0);
+				readTh.start();
+				try {
+					readTh.join();
+				} catch (InterruptedException e1) {
+					System.out.println("----- ERRORE readThread.join() durante la connect:");
+					e1.printStackTrace();
+				}
+
+				if (responseLine != null) {
+					switch (stato) {
+						case 0:  //ho mandato la richiesta di connessione
+							System.out.println("\n----- STATO 0 ----- ");
+							System.out.println("Rx: " + responseLine);
+							if (responseLine.equals(OpenWebNet.MSG_OPEN_OK)) {
+								System.out.println("Tx: " + socketComandi);
+								output.write(socketComandi); //comandi
+
+								output.flush();
+								stato = 1;
+								setTimeout(0);
+							} else {
+								//se non mi connetto chiudo la socket
+								System.out.println("Chiudo la socket verso il server " + ip);
+								this.close();
+								break label;
+							}
+							break;
+						case 1:  //ho mandato il tipo di servizio richiesto
+							System.out.println("----- STATO 1 -----");
+							System.out.println("Rx: " + responseLine);
+
+							//applico algoritmo di conversione
+							System.out.println("Controllo sulla password");
+							Long seed = Long.valueOf(responseLine.substring(2, responseLine.length() - 2));
+							System.out.println("Tx: " + "seed=" + seed);
+							Long risultato = OpenWebNetUtils.passwordFromSeed(seed, passwordOpen);
+							System.out.println("Tx: " + "*#" + risultato + "##");
+							output.write("*#" + risultato + "##");
+							output.flush();
+							stato = 2; //setto stato dopo l'autenticazione
+							setTimeout(0);
+							break;
+						case 2:
+							System.out.println("\n----- STATO 2 -----");
+							System.out.println("Rx: " + responseLine);
+							if (responseLine.equals(OpenWebNet.MSG_OPEN_OK)) {
+								System.out.println("Connessione OK");
+								stato = 3;
+								break label;
+							} else {
+								System.out.println("Impossibile connettersi!!");
+								//se non mi connetto chiudo la socket
+								System.out.println("Chiudo la socket verso il server " + ip);
+								this.close();
+								break label;
+							}
+						default:
+							break label;
+					}
+				} else {
+					System.out.println("--- Risposta dal webserver NULL");
+					this.close();
+					break;//ramo else di if(responseLine != null)
+				}
+			}//chiude while(true)
+		} else {
+			System.out.println("--- Nessuna Risposta dal webserver");
+			this.close();
+			//break;//ramo else di if(responseLine != null)
+		}
+		return stato == 3;
+	}//chiude connect()
+
+
+	/**
+	 * Chiude la socket comandi ed imposta stato = 0
+	 *
+	 */
+	public void close(){ //TODO: is this thread safe?
+		if(socket != null){
+			try {
+				socket.close();
+				socket = null;
+				stato = 0;
+				System.out.println("-----Socket chiusa correttamente-----");
+			} catch (IOException e) {
+				System.out.println("Errore Socket: <GestioneSocketComandi>");
+				e.printStackTrace();
+			}
+		}
+	}
+
+
+	/**
+	 * Metodo per l'invio di un comando open
+	 *
+	 * @param comandoOpen comando da inviare
+	 * @return 0 se il comando vine inviato, 1 se non Ã¨ possibile inviare il comando
+	 */
+	public void invia(String comandoOpen){
+		//creo l'oggetto openWebNet con il comandoOpen
+		try{
+			openWebNet = new OpenWebNet(comandoOpen);
+			if(openWebNet.isErrorFrame()){
+				System.out.println("ERRATA frame open "+comandoOpen+", la invio comunque!!!");
+			}else{
+				System.out.println("CREATO oggetto OpenWebNet "+openWebNet.getFrameOpen());
+			}
+		}catch(Exception e){
+			System.out.println("ERRORE nella creazione dell'oggetto OpenWebNet "+comandoOpen);
+			System.out.println("Eccezione in GestioneSocketComandi durante la creazione del'oggetto OpenWebNet");
+			e.printStackTrace();
+		}
+
+		System.out.println("Tx: "+comandoOpen);
+		output.write(comandoOpen);
+		output.flush();
+
+		do{
+			setTimeout(0);
+			readTh = null;
+			readTh = new ReadThread(socket,input,0);
+			readTh.start();
+			try{
+				readTh.join();
+			}catch (InterruptedException e1) {
+
+				System.out.println("----- ERRORE readThread.join() durante l'invio comando:");
+				e1.printStackTrace();
+			}
+
+			if(responseLine != null){
+				if (OpenWebNet.MSG_OPEN_OK.equals(responseLine)) {
+					System.out.println("Rx: " + responseLine);
+					System.out.println("Comando inviato correttamente");
+					return;
+					//break;
+				} else if (OpenWebNet.MSG_OPEN_KO.equals(responseLine)) {
+					System.out.println("Rx: " + responseLine);
+					System.out.println("Comando NON inviato correttamente");
+					return;
+					//break;
+				}
+
+			}else{
+				System.out.println("Impossibile inviare il comando");
+				return;
+				//break;
+			}
+		}while(true);
+	}
+
+
+	/**
+	 * Attiva il thread per il timeout sulla risposta inviata dal WebServer.
+	 *
+	 * @param tipoSocket: 0 se  socket comandi, 1 se  socket monitor
+	 */
+	public void setTimeout(int tipoSocket){
+		timeoutThread = null;
+		timeoutThread = new NewThread("timeout",tipoSocket);
+		timeoutThread.start();
+	}
+
+}//chiuse la classe
