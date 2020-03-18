@@ -19,7 +19,7 @@ class JSONSerializer {
     private Context mContext;
     private String mSerializeFileName;
 
-     public JSONSerializer(Context c, String f) {
+     JSONSerializer(Context c, String f) {
         mContext = c;
         mSerializeFileName = f;
     }
