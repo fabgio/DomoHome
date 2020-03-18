@@ -13,7 +13,7 @@ import org.junit.runner.RunWith;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -28,25 +28,26 @@ import static org.junit.Assert.assertTrue;
 @RunWith(AndroidJUnit4.class)
 public class InstrumentedTest {
     private ArrayList<Command>commands;
-    private HashSet<String> titles;
+    private Set<String> titles;
     @Before
     public void initialize() {
+        // settings for camera testing
         SettingsFragment.sIp = "10.0.0.36";
         SettingsFragment.sPasswordOpen = 22071975;
 
-        // settingsgit for Hashset testing
+        // settings for Hashset testing
         commands=new ArrayList<>();
         Command c = new Command();
         c.setTitle("pippo");
         c.setWhere(52);
         commands.add(c);
-        titles = (HashSet<String>) commands
+        titles = commands
                 .stream()
                 .map(Command::getTitle)
                 .collect(Collectors.toSet());
     }
         @Test
-        public void UrlBitmapEqualToNull() throws IOException {
+        public void isUrlBitmapEqualToNull() throws IOException {
             VideoFetchr videoFetchr = new VideoFetchr();
             Bitmap b = videoFetchr.getUrlBitmap("https://" + SettingsFragment.sIp + "/telecamera.php");
             assertNotNull("Not null value is good! ",b);
@@ -56,7 +57,7 @@ public class InstrumentedTest {
     public void isSetNotNull(){
         assertNotNull("notnull",titles);
         Logger logger=Logger.getLogger("Logger");
-        logger.info("set   "+titles);
+        logger.info("Set   "+titles);
         logger.info("List   "+commands);
     }
     @Test
