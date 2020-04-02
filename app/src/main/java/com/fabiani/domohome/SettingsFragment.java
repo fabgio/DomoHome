@@ -1,4 +1,4 @@
-package com.fabiani.domohome.controller;
+package com.fabiani.domohome;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -13,8 +13,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Patterns;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
-import com.fabiani.domohome.R;
 
 import java.util.Objects;
 import java.util.regex.Matcher;

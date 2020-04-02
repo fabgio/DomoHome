@@ -1,4 +1,4 @@
-package com.fabiani.domohome.controller;
+package com.fabiani.domohome;
 
 import android.app.Fragment;
 

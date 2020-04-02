@@ -1,4 +1,4 @@
-package com.fabiani.domohome.model;//package client_java_core.core;
+package com.fabiani.domohome;//package client_java_core.core;
 
 /***************************************************************************
  * 			                  OpenWebNet.java                              *

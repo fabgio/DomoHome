@@ -1,4 +1,4 @@
-package com.fabiani.domohome.controller;
+package com.fabiani.domohome;
 
 import android.app.Fragment;
 import android.content.Intent;
@@ -18,10 +18,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ToggleButton;
-
-import com.fabiani.domohome.R;
-import com.fabiani.domohome.model.Command;
-import com.fabiani.domohome.model.Dashboard;
 
 import java.util.List;
 
@@ -126,10 +122,9 @@ public  class CommandGridFragment extends Fragment {
             mItemToggleButton.setTextOn(mCommand.getTitle());
             mItemToggleButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 mCommand.setWhat(isChecked ? 1 : 0);
-                if (SettingsFragment.isNetworkActiveConnected(getActivity()))
-                    if (SettingsFragment.isIpValid)
-                        if (SettingsFragment.isPassordOpenValid)
-                            new InviaCommand(mCommand).execute();
+                if (SettingsFragment.isNetworkActiveConnected(getActivity()) && SettingsFragment.isIpValid
+                        &&(SettingsFragment.isPassordOpenValid))
+                        new InviaCommand(mCommand).execute();
             });
             mItemToggleButton.setOnLongClickListener((View v) -> {
                 getActivity().openContextMenu(v);

@@ -36,7 +36,7 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
-package com.fabiani.domohome.model;
+package com.fabiani.domohome;
 
 
 

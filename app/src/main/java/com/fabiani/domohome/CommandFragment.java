@@ -1,4 +1,4 @@
-package com.fabiani.domohome.controller;
+package com.fabiani.domohome;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -15,9 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
-import com.fabiani.domohome.R;
-import com.fabiani.domohome.model.Command;
-import com.fabiani.domohome.model.Dashboard;
+
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
