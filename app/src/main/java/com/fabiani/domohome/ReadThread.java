@@ -1,4 +1,4 @@
-package com.fabiani.domohome.model;
+package com.fabiani.domohome;
 /***************************************************************************
  * 			                   ReadThread.java                             *
  * 			              --------------------------                       *

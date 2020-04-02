@@ -1,10 +1,8 @@
-package com.fabiani.domohome.model;
+package com.fabiani.domohome;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
-
-import com.fabiani.domohome.controller.SettingsFragment;
 
 import java.io.DataInputStream;
 import java.io.IOException;

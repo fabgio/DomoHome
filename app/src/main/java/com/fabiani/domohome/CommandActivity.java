@@ -1,4 +1,4 @@
-package com.fabiani.domohome.controller;
+package com.fabiani.domohome;
 
 import java.util.UUID;
 

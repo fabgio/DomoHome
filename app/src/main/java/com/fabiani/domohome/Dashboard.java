@@ -1,10 +1,8 @@
-package com.fabiani.domohome.model;
+package com.fabiani.domohome;
 
 import android.content.Context;
 import android.preference.PreferenceManager;
 import android.util.Log;
-
-import com.fabiani.domohome.controller.SettingsFragment;
 
 import java.util.ArrayList;
 import java.util.List;

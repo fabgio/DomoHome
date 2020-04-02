@@ -18,7 +18,7 @@
  *                                                                         *
  ***************************************************************************/
 //package client_java_core.core;
-package com.fabiani.domohome.model;
+package com.fabiani.domohome;
 
 /**
  * Description:

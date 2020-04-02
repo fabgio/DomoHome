@@ -1,7 +1,4 @@
-package com.fabiani.domohome.controller;
-
-import com.fabiani.domohome.model.Command;
-import com.fabiani.domohome.model.GestioneSocketComandi;
+package com.fabiani.domohome;
 
 import java.util.concurrent.TimeUnit;
 

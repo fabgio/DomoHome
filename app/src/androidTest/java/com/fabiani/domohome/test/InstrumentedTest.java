@@ -3,9 +3,9 @@ package com.fabiani.domohome.test;
 import android.graphics.Bitmap;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.fabiani.domohome.controller.SettingsFragment;
-import com.fabiani.domohome.model.Command;
-import com.fabiani.domohome.model.VideoFetchr;
+import com.fabiani.domohome.SettingsFragment;
+import com.fabiani.domohome.Command;
+import com.fabiani.domohome.VideoFetchr;
 
 import org.junit.Before;
 import org.junit.Test;

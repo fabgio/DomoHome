@@ -18,7 +18,7 @@
  *                                                                         *
  ***************************************************************************/
 
-package com.fabiani.domohome.model;
+package com.fabiani.domohome;
 
 import com.bticino.openwebnet.OpenWebNetUtils;
 

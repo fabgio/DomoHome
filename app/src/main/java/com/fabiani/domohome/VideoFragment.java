@@ -1,4 +1,4 @@
-package com.fabiani.domohome.controller;
+package com.fabiani.domohome;
 
 
 import android.app.Fragment;
@@ -10,9 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-
-import com.fabiani.domohome.R;
-import com.fabiani.domohome.model.VideoFetchr;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
