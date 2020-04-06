@@ -7,8 +7,8 @@ import java.util.UUID;
 //POJO
 
 public class Command {
-	public static final Integer[] sWhereChoices = new Integer[99]; //TODO: Check boundaries
-	public static final Integer[] sTimeOutChoices={0,1,2,3,4,5};
+	static final Integer[] sWhereChoices = new Integer[99]; //TODO: Check boundaries
+	static final Integer[] sTimeOutChoices={0,1,2,3,4,5};
 	private UUID mId;
 	private String mTitle;
 	private transient int mWhat;
@@ -70,35 +70,35 @@ public class Command {
 		return mTitle;
 	}
 
-	public void setWho(int who) {
+	void setWho(int who) {
 		mWho = who;
 	}
 
-	public int getWho() {
+	int getWho() {
 		return mWho;
 	}
 
-	public int getWhat() {
+	int getWhat() {
 		return mWhat;
 	}
 
-	public void setWhat(int what) {
+	void setWhat(int what) {
 		mWhat = what;
 	}
 
-	public int getWhere() {
+	int getWhere() {
 		return mWhere;
 	}
 
-	public void setWhere(int where) {
+	void setWhere(int where) {
 		mWhere = where;
 	}
 
-	public int getTimeout() {
+	int getTimeout() {
 		return mTimeout;
 	}
 
-	public void setTimeout(int timeout) {
+	void setTimeout(int timeout) {
 		mTimeout = timeout;
 	}
 }
