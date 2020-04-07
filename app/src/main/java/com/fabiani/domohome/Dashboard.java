@@ -39,31 +39,31 @@ public class Dashboard {
 				.getBoolean(SettingsFragment.EXTRA_PASSWORD_OPEN_IS_VALID, SettingsFragment.isPassordOpenValid);
 	}
 
-	public static Dashboard get(Context c) {
+	static Dashboard get(Context c) {
 		if (sDashboard == null)
 			sDashboard = new Dashboard(c.getApplicationContext());
 		return sDashboard;
 	}
 
-	public List<Command> getCommands() {
+	List<Command> getCommands() {
 		return mCommands;
 	}
 
-	public Command getCommand(UUID id) {
+	Command getCommand(UUID id) {
 		Optional<Command>found=mCommands.stream().filter(command->command.getId().equals(id)).findFirst();
 		return found.orElse(null);
 	}
 
-	public void addCommand(Command c) {
+	void addCommand(Command c) {
 			mCommands.add(c);
 	}
 
 
-	public void deleteCommand(Command c) {
+	void deleteCommand(Command c) {
 		mCommands.remove(c);
 	}
 
-	public void saveCommands() {
+	void saveCommands() {
 		try {
 			mJSONSerializer.saveCommands((ArrayList<Command>) mCommands);
 			Log.i(TAG, "Commands saved");
