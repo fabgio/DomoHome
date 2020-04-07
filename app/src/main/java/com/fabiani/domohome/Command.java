@@ -70,35 +70,33 @@ public class Command {
 		return mTitle;
 	}
 
-	void setWho(int who) {
+	public void setWho(int who) {
 		mWho = who;
 	}
 
-	int getWho() {
-		return mWho;
-	}
+	public int getWho() { return mWho; }
 
-	int getWhat() {
+	public int getWhat() {
 		return mWhat;
 	}
 
-	void setWhat(int what) {
+	public void setWhat(int what) {
 		mWhat = what;
 	}
 
-	int getWhere() {
+	public int getWhere() {
 		return mWhere;
 	}
 
-	void setWhere(int where) {
+	public void setWhere(int where) {
 		mWhere = where;
 	}
 
-	int getTimeout() {
+	public int  getTimeout() {
 		return mTimeout;
 	}
 
-	void setTimeout(int timeout) {
+	public void setTimeout(int timeout) {
 		mTimeout = timeout;
 	}
 }
