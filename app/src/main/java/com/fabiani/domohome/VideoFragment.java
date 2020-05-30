@@ -1,6 +1,5 @@
 package com.fabiani.domohome;
 
-
 import android.app.Fragment;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -10,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -72,7 +70,7 @@ public class VideoFragment extends Fragment {
             try {
                 mBitmap = mVideoFetchr.getUrlBitmap("https://" + SettingsFragment.sIp + "/telecamera.php");//TODO: progress bar
             } catch (IOException e) {
-                videoCrashed =true;
+                videoCrashed=true;
             }
             mImageView.post(() -> mImageView.setImageBitmap(mBitmap));//TODO: resize image to fit bitmap
         }
